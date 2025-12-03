@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Invoker skins — Black & Red showcase</title>
+<style>
+  /* --- Общая база --- */
+  :root{
+    --bg:#0b0b0b;            /* глубокий чёрный */
+    --accent:#d20b0b;        /* красный акцент */
+    --card:#0f0f0f;          /* чуть светлее карточки */
+    --glass: rgba(255,255,255,0.03);
+    --text:#e6e6e6;
+    --radius:14px;
+  }
+
+  html,body{
+    height:100%;
+    margin:0;
+    font-family: Inter, system-ui, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    background: radial-gradient(1200px 600px at 10% 10%, rgba(210,11,11,0.05), transparent),
+                radial-gradient(900px 450px at 90% 90%, rgba(210,11,11,0.03), transparent),
+                var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+  }
+
+  /* --- Заголовок и панель --- */
+  .header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    padding:18px 28px;
+    border-bottom:1px solid rgba(255,255,255,0.03);
+    background: linear-gradient(90deg, rgba(255,255,255,0.02), transparent);
+    position:sticky;
+    top:0;
+    z-index:50;
+  }
+  .brand{
+    display:flex;
+    gap:12px;
+    align-items:center;
+  }
+  .logo{
+    width:44px;
+    height:44px;
+    border-radius:10px;
+    background:linear-gradient(135deg,var(--accent),#5a0000);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:700;
+    box-shadow: 0 6px 24px rgba(210,11,11,0.15);
+  }
+  .brand h1{
+    margin:0;
+    font-size:18px;
+    letter-spacing:0.6px;
+  }
+  .controls{
+    display:flex;
+    gap:8px;
+    align-items:center;
+  }
+  .btn{
+    background:transparent;
+    border:1px solid rgba(255,255,255,0.06);
+    color:var(--text);
+    padding:8px 12px;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:14px;
+    transition:all .18s ease;
+  }
+  .btn:hover{ transform:translateY(-3px); box-shadow:0 8px 30px rgba(0,0,0,0.6); }
+  .btn.accent{
+    background:linear-gradient(180deg, rgba(210,11,11,0.12), rgba(210,11,11,0.04));
+    border:1px solid rgba(210,11,11,0.5);
+    color:var(--accent);
+    font-weight:600;
+  }
+
+  /* --- Сетка карточек --- */
+  .wrap{
+    max-width:1200px;
+    margin:28px auto;
+    padding:16px;
+  }
+
+  .grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
+    gap:18px;
+  }
+
+  .card{
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.015));
+    border-radius:var(--radius);
+    overflow:hidden;
+    border:1px solid rgba(255,255,255,0.03);
+    position:relative;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+    min-height:320px;
+    display:flex;
+    flex-direction:column;
+  }
+
+  /* Красная полоса вверху */
+  .card::before{
+    content:"";
+    position:absolute;
+    left:0;
+    top:0;
+    width:100%;
+    height:8px;
+    background:linear-gradient(90deg,var(--accent), #ff6b6b);
+  }
+
+  .thumb{
+    flex:1 1 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding:18px;
+  }
+
+  /* Контейнер для картинки с маской/рамкой */
+  .imgwrap{
+    width:100%;
+    height:220px;
+    border-radius:10px;
+    overflow:hidden;
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(0,0,0,0.25));
+    border:1px solid rgba(255,255,255,0.03);
+  }
+
+  .imgwrap img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    transform-origin:center;
+    /* анимация вверх-вниз: используем translateY */
+    animation: floatY var(--dur,6s) ease-in-out infinite;
+    /* добавим плавный мягкий масштаб эффект */
+    transition: transform .3s ease;
+  }
+
+  /* Красный рамочный декор снизу */
+  .card .meta{
+    padding:14px 16px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    border-top:1px solid rgba(255,255,255,0.02);
+    background: linear-gradient(180deg, transparent, rgba(255,255,255,0.01));
+  }
+
+  .meta .title{
+    font-weight:700;
+    font-size:15px;
+  }
+  .meta .sub{
+    font-size:13px;
+    color: rgba(230,230,230,0.7);
+  }
+
+  /* accent badge */
+  .badge{
+    padding:6px 10px;
+    border-radius:999px;
+    border:1px solid rgba(210,11,11,0.18);
+    background: linear-gradient(180deg, rgba(210,11,11,0.08), rgba(210,11,11,0.02));
+    color:var(--accent);
+    font-weight:600;
+    font-size:13px;
+  }
+
+  /* --- Анимация float --- */
+  @keyframes floatY{
+    0%   { transform: translateY(0px) scale(1.01); }
+    50%  { transform: translateY(-14px) scale(1.03); }
+    100% { transform: translateY(0px) scale(1.01); }
+  }
+
+  /* Разные фазы и скорости — через utility attrs */
+  .slow  img { animation-duration:8s; }
+  .fast  img { animation-duration:5s;  }
+  .rev   img { animation-direction:reverse; }
+  .long  img { animation-duration:10s; }
+
+  /* hover: чуть приподнять картинку и усилить тень */
+  .card:hover{
+    transform: translateY(-6px);
+    transition: transform .28s ease;
+    box-shadow: 0 30px 70px rgba(0,0,0,0.7);
+  }
+  .card:hover .imgwrap img{
+    transform: scale(1.06);
+  }
+
+  /* мобильная оптимизация */
+  @media (max-width:520px){
+    .imgwrap{ height:180px; }
+    .brand h1{ font-size:16px; }
+    .logo{ width:40px; height:40px; }
+  }
+
+  /* небольшая подпись внизу */
+  .footer{
+    max-width:1200px;
+    margin:18px auto 80px;
+    padding:8px 16px;
+    color:rgba(255,255,255,0.45);
+    font-size:13px;
+  }
+</style>
+</head>
+<body>
+  <header class="header">
+    <div class="brand">
+      <div class="logo">IV</div>
+      <div>
+        <h1>Invoker skins showcase</h1>
+        <div style="font-size:13px;color:rgba(255,255,255,0.45)">Black • Red • Up-Down motion</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button class="btn accent" id="shuffleBtn" title="Перемешать порядок">Перемешать</button>
+      <button class="btn" id="pauseBtn" title="Поставить анимацию на паузу">Пауза</button>
+      <button class="btn" id="playBtn" title="Включить анимацию">Включить</button>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <section class="grid" id="grid">
+      <!-- Карточки: замените src на свои картинки со скинами Инвокера -->
+      <article class="card slow">
+        <div class="thumb">
+          <div class="imgwrap">
+            <img src="imagesinvoker_skin1.jpg" alt="Invoker skin 1">
+          </div>
+        </div>
+        <div class="meta">
+          <div>
+            <div class="title">инвокер скин 1</div>
+            <div class="sub">Коллекция: Крутой плащ</div>
+          </div>
+          <div class="badge">МощныйПлащ</div>
+        </div>
+      </article>
+
+      <article class="card fast rev">
+        <div class="thumb">
+          <div class="imgwrap">
+            <img src="imagesinvoker_skin2.jpg" alt="Invoker skin 2">
+          </div>
+        </div>
+        <div class="meta">
+          <div>
+            <div class="title">инвокер скин 2</div>
+            <div class="sub">Коллекция: Immortal</div>
+          </div>
+          <div class="badge">Immortal</div>
+        </div>
+      </article>
+
+      <article class="card long">
+        <div class="thumb">
+          <div class="imgwrap">
+            <img src="imagesinvoker_skin3.jpg" alt="Invoker skin 3">
+          </div>
+        </div>
+        <div class="meta">
+          <div>
+            <div class="title">инвокер скин 3</div>
+            <div class="sub">нищий плащ</div>
+          </div>
+          <div class="badge">Нищета</div>
+        </div>
+      </article>
+
+      <article class="card">
+        <div class="thumb">
+          <div class="imgwrap">
+            <img src="imagesinvoker_skin4.jpg" alt="Invoker skin 4">
+          </div>
+        </div>
+        <div class="meta">
+          <div>
+            <div class="title">4444444444444444444</div>
+            <div class="sub">Коллекция: PayToLose шмотка</div>
+          </div>
+          <div class="badge">Бейби</div>
+        </div>
+      </article>
+
+      <!-- добавляй столько карточек, сколько нужно -->
+    </section>
+  </main>
+
+  <div class="footer">
+    
+2025 wwerqqrqeew rdqwerdeeerdwrdqqqrd AUES DOTA2 aclbacl
+  </div>
+
+<script>
+  // Простой JS для управления анимацией и перемешиванием
+  const pauseBtn = document.getElementById('pauseBtn');
+  const playBtn = document.getElementById('playBtn');
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  const grid = document.getElementById('grid');
+
+  function setAnimationPaused(paused){
+    // переключаем CSS анимацию: по сути добавим/уберём класс paused
+    document.querySelectorAll('.imgwrap img').forEach(img => {
+      img.style.animationPlayState = paused ? 'paused' : 'running';
+    });
+  }
+
+  pauseBtn.addEventListener('click', () => setAnimationPaused(true));
+  playBtn.addEventListener('click', () => setAnimationPaused(false));
+
+  shuffleBtn.addEventListener('click', () => {
+    // простое случайное перемешивание карточек DOM
+    const cards = Array.from(grid.children);
+    for (let i = cards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cards[i], cards[j]] = [cards[j], cards[i]];
+    }
+    // очистим и добавим снова
+    grid.innerHTML = '';
+    cards.forEach(c => grid.appendChild(c));
+  });
+
+  // Рандомизируем фазы/скорости при загрузке для более живого эффекта
+  function randomizeSpeeds(){
+    const classes = ['slow','fast','long',''];
+    Array.from(grid.children).forEach((card, idx) => {
+      card.classList.remove(...classes);
+      card.classList.add(classes[idx % classes.length]);
+      // даём случайную продолжительность в CSS переменной
+      const img = card.querySelector('img');
+      const dur = (5 + Math.random()*6).toFixed(2) + 's'; // 5..11s
+      img.style.setProperty('--dur', dur);
+      // сдвинем фазу, чтобы не все синхронно
+      const delay = (Math.random()*-3).toFixed(2) + 's';
+      img.style.animationDelay = delay;
+    });
+  }
+  window.addEventListener('load', () => {
+    randomizeSpeeds();
+  });
+
+  // Для пользователей: можно кликнуть по карточке, чтобы открыть картинку в новой вкладке
+  grid.addEventListener('click', (e) => {
+    const img = e.target.closest('.imgwrap')?.querySelector('img');
+    if(img){
+      window.open(img.src, '_blank');
+    }
+  });
+</script>
+</body>
+</html>
